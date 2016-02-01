@@ -293,6 +293,8 @@ class Post(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
+    abstract = db.Column(db.Text)
+    title = db.Column(db.Text)
 
     @staticmethod
     def generate_fake(count=100):
@@ -317,6 +319,7 @@ class Post(db.Model):
         target.body_html = bleach.linkify(bleach.clean(
             markdown(value, output_format='html'),
             tags=allowed_tags, strip=True))
+        target.abstract = value[0:100]+"..."
 
     def to_json(self):
         json_post = {
